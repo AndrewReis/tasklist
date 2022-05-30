@@ -2,8 +2,10 @@
 import { Router } from 'express';
 
 // controllers
+import { create, getAll } from '../controllers/users/persist.controller';
 
 // routes
 export const usersRoutes = Router();
 
-usersRoutes.get('/', (request, response) => response.status(200).send());
+usersRoutes.get('/', getAll);
+usersRoutes.post('/create', create);
