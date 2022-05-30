@@ -5,9 +5,11 @@ import { validate } from 'jsonschema';
 
 // helpers
 import { AppError } from '../../helpers/app-error.helper';
+// use-cases
+import { createUserUseCase, getAllUsersUseCase } from '../../use-cases/users';
 
 // privates
-const _validateBodyCreate = (body: object) => {
+const _validateBodyCreate = (body: {name: string, email: string, password: string}) => {
   const schema = {
     'id'         : '/CreateUser',
     'type'       : 'object',
@@ -27,9 +29,13 @@ const _validateBodyCreate = (body: object) => {
   throw new AppError(`Body missing some values: ${result.toString()}`, 400);
 };
 
-export const create = (request: Request, response: Response) => {
+export const create = async (request: Request, response: Response) => {
   const body = _validateBodyCreate(request.body);
-  return response.status(201).json(body);
+  const user = await createUserUseCase.execute(body);
+  return response.status(201).json(user);
 };
 
-export const getAll = (request: Request, response: Response) => response.json({ ok: true });
+export const getAll = async (request: Request, response: Response) => {
+  const users = await getAllUsersUseCase.execute();
+  return response.json(users);
+};

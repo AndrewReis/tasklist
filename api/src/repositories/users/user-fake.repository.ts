@@ -2,16 +2,24 @@ import { User } from '../../entities/users';
 import { IUserRepository } from './interface';
 
 export class UserFakeRepository implements IUserRepository {
-  create(userEntity: { name: string; email: string; password: string; }): Promise<User> {
-    throw new Error('Method not implemented.');
+  private repository: User[];
+
+  constructor() {
+    this.repository = [];
   }
-  getByEmail(email: string): Promise<User | undefined> {
-    throw new Error('Method not implemented.');
+
+  async create(userEntity: { name: string; email: string; password: string; }): Promise<User> {
+    const user = new User(userEntity.name, userEntity.email);
+    this.repository.push(user);
+    return user;
   }
-  getById(id: string): Promise<User | undefined> {
-    throw new Error('Method not implemented.');
+  async getByEmail(email: string): Promise<User | undefined> {
+    return this.repository.find((findUser) => findUser.email === email);
   }
-  getAll(): Promise<User[]> {
-    throw new Error('Method not implemented.');
+  async getById(id: string): Promise<User | undefined> {
+    return this.repository.find((findUser) => findUser.id === id);
+  }
+  async getAll(): Promise<User[]> {
+    return this.repository;
   }
 }
