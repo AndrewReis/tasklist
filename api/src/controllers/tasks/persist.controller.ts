@@ -6,19 +6,17 @@ import { validate } from 'jsonschema';
 // helpers
 import { AppError } from '../../helpers/app-error.helper';
 // use-cases
-import { createUserUseCase } from '../../use-cases/users';
+import { createTaskUseCase } from '../../use-cases/tasks';
 
 // privates
-const _validateBodyCreate = (body: {name: string, email: string, password: string}) => {
+const _validateBodyCreate = (body: {title: string}) => {
   const schema = {
-    'id'         : '/CreateUser',
+    'id'         : '/CreateTask',
     'type'       : 'object',
     'properties' : {
-      'name'     : { 'type': 'string' },
-      'email'    : { 'type': 'string' },
-      'password' : { 'type': 'string' },
+      'title': { 'type': 'string' },
     },
-    'required': ['name', 'email', 'password'],
+    'required': ['title'],
   };
 
   const result = validate(body, schema);
@@ -30,7 +28,8 @@ const _validateBodyCreate = (body: {name: string, email: string, password: strin
 };
 
 export const create = async (request: Request, response: Response) => {
+  const { userId } = request.params;
   const body = _validateBodyCreate(request.body);
-  const user = await createUserUseCase.execute(body);
-  return response.status(201).json(user);
+  const task = await createTaskUseCase.execute(userId, body.title);
+  return response.status(201).json(task);
 };
